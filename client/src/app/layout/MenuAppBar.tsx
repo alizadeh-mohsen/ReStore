@@ -1,16 +1,10 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+import { Badge, Box, IconButton, List, ListItem, Toolbar } from '@mui/material';
+import { NavLink } from 'react-router-dom';
+import { ShoppingCart } from '@mui/icons-material';
+
 
 interface Props {
 
@@ -18,97 +12,59 @@ interface Props {
   handleThemeChange: () => void
 }
 
+const midLinks = [
+  { path: '/catalog', title: 'catalog' },
+  { path: '/about', title: 'about' },
+  { path: '/contact', title: 'contact' }
+]
+const rightLinks = [
+  { path: '/resgister', title: 'register' },
+  { path: '/login', title: 'login' }
+]
+
+const navLinkStyle =
+  { color: 'inherit', textDecoration: 'none', '&:hover': { color: 'secondary.main' }, '&.active': { color: 'yellow' } }
 
 export default function MenuAppBar({ handleThemeChange, darkMode }: Props) {
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={auth}
-              onChange={handleChange}
-              aria-label="login switch"
-            />
-          }
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup>
+    <AppBar position="static" sx={{ mb: 4 }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
-      <AppBar position="static" sx={{ mb: 4 }}>
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Box display='felx' alignItems='center'>
+          <Typography variant="h6" component={NavLink} to='/' exact
+            sx={navLinkStyle}>
             RE-STORE
           </Typography>
+          <Switch checked={darkMode} onChange={handleThemeChange} />
+        </Box>
+        <List sx={{ display: 'flex' }}>
+          {
+            midLinks.map(({ title, path }) => (
+              <ListItem component={NavLink} to={path} key={path} sx={navLinkStyle}>
+                {title.toUpperCase()}
+              </ListItem>
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={darkMode}
-                onChange={handleThemeChange}
-              />
-            }
-            label={darkMode ? 'Light' : 'Dark'}
-          />
+            ))}
+        </List>
+        <Box display='flex' alignItems='center'>
+          <IconButton sx={{ color: 'inherit' }}>
+            <Badge badgeContent={4}>
+              <ShoppingCart />
+            </Badge>
+          </IconButton>
 
-          {auth && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Menu>
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Box>
+          <List sx={{ display: 'flex' }}>
+            {
+              rightLinks.map(({ title, path }) => (
+                <ListItem component={NavLink} to={path} key={path} sx={navLinkStyle}>
+                  {title.toUpperCase()}
+                </ListItem>
+
+              ))}
+          </List>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }

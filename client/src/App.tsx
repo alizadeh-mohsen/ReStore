@@ -8,10 +8,13 @@ import Catalog from './features/catalog/Catalog';
 import ProductDetail from './features/catalog/ProductDetail';
 import About from './features/about/About';
 import Contact from './features/contact/Contact';
+import TestErrors from './features/buggy/TestErrors';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
   const paletteType = darkMode ? 'dark' : 'light'
 
   const theme = createTheme({
@@ -30,6 +33,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <ToastContainer position='bottom-right' />
       <MenuAppBar handleThemeChange={handleThemeChange} darkMode={darkMode} />
       <Container>
         <Route exact path='/' component={Home} />
@@ -37,6 +41,7 @@ function App() {
         <Route path='/catalog/:id' component={ProductDetail} />
         <Route path='/about' component={About} />
         <Route path='/contact' component={Contact} />
+        <Route path='/testErrors' component={TestErrors} />
       </Container>
     </ThemeProvider>
   );

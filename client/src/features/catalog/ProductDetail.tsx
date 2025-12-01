@@ -1,8 +1,8 @@
 import { Product } from "../../app/models/product";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import agent from "../../app/http/agent";
 
 
 
@@ -12,8 +12,7 @@ export default function ProductDetail() {
     const [product, setProduct] = useState<Product | null>(null)
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-
-        axios.get(`http://localhost:5000/api/products/${id}`)
+        agent.Catalog.details(parseInt(id))
             .then(response => setProduct(response.data))
             .catch(error => console.log(error))
             .finally(() => setLoading(false))
@@ -30,7 +29,7 @@ export default function ProductDetail() {
                 <img src={product.pictureUrl} alt={product.name} style={{ width: '100%' }} />
             </Grid>
             <Grid>
-                <Typography variant='h3'>{product.name}</Typography>
+                <Typography variant='h5'>{product.name}</Typography>
                 <Divider sx={{ mb: 2 }}></Divider>
                 <Typography variant='h4' color='secondary.main'>
                     ${(product.price / 100).toFixed(2)}
@@ -45,7 +44,7 @@ export default function ProductDetail() {
                             </TableRow>
                             <TableRow>
                                 <TableCell>Description</TableCell>
-                                <TableCell>{product.description.substring(0, 30)}</TableCell>
+                                <TableCell>{product.description.substring(0, 10)}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell>Type</TableCell>

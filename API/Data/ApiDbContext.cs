@@ -9,4 +9,5 @@ public class ApiDbContext : DbContext
     }
 
     public DbSet<Product> Products { get; set; } = default!;
+    public DbSet<Basket> Baskets { get; set; } = default!;
 }

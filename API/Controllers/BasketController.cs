@@ -22,7 +22,7 @@ namespace API.Controllers
         [HttpGet(Name = "GetBasket")]
         public async Task<ActionResult<BasketDto>> GetBasket()
         {
-            var basket = _context.Baskets
+            var basket = await _context.Baskets
                 .Include(b => b.Items)
                 .ThenInclude(b => b.Product)
                 .FirstOrDefaultAsync(p => p.BuyerId == Request.Cookies["buyerId"]);
@@ -75,7 +75,6 @@ namespace API.Controllers
         {
             var basket = await _context.Baskets.Include(p => p.Items).ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(b => b.BuyerId == Request.Cookies["buyerId"]);
-            var product = await _context.Products.FindAsync(productId);
             basket.RemoveItem(productId, quantity);
             _context.SaveChanges(true);
             return Ok();

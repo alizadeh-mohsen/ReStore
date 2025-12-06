@@ -10,7 +10,7 @@ namespace API.Automapper
         {
             CreateMap<Basket, BasketDto>().ReverseMap();
             CreateMap<BasketItem, BasketItemDto>()
-                    .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Product.Id))
+                    .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
                     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
                     .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Product.PictureUrl))

@@ -2,8 +2,10 @@ import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import Switch from '@mui/material/Switch';
 import { Badge, Box, IconButton, List, ListItem, Toolbar } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { ShoppingCart } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
+import { useAppSelector } from '../store/configureStore';
 
 
 interface Props {
@@ -16,7 +18,8 @@ const midLinks = [
   { path: '/catalog', title: 'catalog' },
   { path: '/about', title: 'about' },
   { path: '/contact', title: 'contact' },
-  { path: '/testErrors', title: 'testErrors' }
+  { path: '/testErrors', title: 'testErrors' },
+
 ]
 const rightLinks = [
   { path: '/resgister', title: 'register' },
@@ -27,7 +30,8 @@ const navLinkStyle =
   { color: 'inherit', textDecoration: 'none', '&:hover': { color: 'secondary.main' }, '&.active': { color: 'yellow' } }
 
 export default function MenuAppBar({ handleThemeChange, darkMode }: Props) {
-
+  const { basket } = useAppSelector(state => state.basket)
+  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0)
   return (
     <AppBar position="static" sx={{ mb: 4 }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -49,8 +53,8 @@ export default function MenuAppBar({ handleThemeChange, darkMode }: Props) {
             ))}
         </List>
         <Box display='flex' alignItems='center'>
-          <IconButton sx={{ color: 'inherit' }}>
-            <Badge badgeContent={4}>
+          <IconButton sx={{ color: 'inherit' }} component={Link} to='/basket'>
+            <Badge badgeContent={itemCount} color='secondary'>
               <ShoppingCart />
             </Badge>
           </IconButton>

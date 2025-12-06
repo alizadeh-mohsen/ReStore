@@ -18,12 +18,9 @@
         public void RemoveItem(int productId, int quantity)
         {
             var item = Items.FirstOrDefault(p => p.ProductId == productId);
-            if (item != null)
-            {
-                if (item.Quantity == 0)
-                    Items.Remove(item);
-                else item.Quantity -= quantity;
-            }
+            item.Quantity -= quantity;
+            if (item.Quantity == 0)
+                Items.Remove(item);
         }
     }
 }

@@ -1,8 +1,9 @@
 import { Product } from "../../app/models/product";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Divider, Grid, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import { Button, Divider, Grid, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import agent from "../../app/http/agent";
+import { formatCurrency } from "../../app/util/utils";
 
 
 
@@ -11,9 +12,10 @@ export default function ProductDetail() {
     const { id } = useParams<{ id: string }>()
     const [product, setProduct] = useState<Product | null>(null)
     const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         agent.Catalog.details(parseInt(id))
-            .then(response => setProduct(response.data))
+            .then(product => setProduct(product))
             .catch(error => console.log(error))
             .finally(() => setLoading(false))
 
@@ -26,13 +28,13 @@ export default function ProductDetail() {
     return (
         <Grid container spacing={6}>
             <Grid columns={6} >
-                <img src={product.pictureUrl} alt={product.name} style={{ width: '100%' }} />
+                <img src={product.pictureUrl} alt={product.name} height={500} />
             </Grid>
             <Grid>
                 <Typography variant='h5'>{product.name}</Typography>
                 <Divider sx={{ mb: 2 }}></Divider>
                 <Typography variant='h4' color='secondary.main'>
-                    ${(product.price / 100).toFixed(2)}
+                    {formatCurrency(product.price)}
                 </Typography>
 
                 <TableContainer>
@@ -53,6 +55,21 @@ export default function ProductDetail() {
                             <TableRow>
                                 <TableCell>Quantity in stock</TableCell>
                                 <TableCell>{product.quantityInStock}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <TextField
+                                        label="With normal TextField"
+                                        id="outlined-start-adornment"
+                                        sx={{ m: 1, width: '25ch' }}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: <InputAdornment position="start">{product.quantityInStock}</InputAdornment>,
+                                            },
+                                        }}
+                                    />
+                                </TableCell>
+                                <TableCell><Button >Update quantity</Button></TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

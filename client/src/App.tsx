@@ -16,7 +16,7 @@ import LoadingIconButton from './test';
 import { useAppDispatch } from './app/store/configureStore';
 import agent from './app/http/agent';
 import { setBasket } from './features/basket/basketSlice';
-import LoadingCompoent from './app/layout/loading/LoadingComponent';
+import LoadingComponent from './app/layout/loading/LoadingComponent';
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -32,7 +32,7 @@ function App() {
     } else {
       setLoading(false)
     }
-  }, [setBasket])
+  }, [dispatch])
 
   const [darkMode, setDarkMode] = useState(false)
   const paletteType = darkMode ? 'dark' : 'light'
@@ -49,7 +49,7 @@ function App() {
   function handleThemeChange() {
     setDarkMode(!darkMode)
   }
-  if (loading) return <LoadingCompoent></LoadingCompoent>
+  if (loading) return <LoadingComponent></LoadingComponent>
   return (
     <ThemeProvider theme={theme}>
       <ToastContainer position='bottom-right' />

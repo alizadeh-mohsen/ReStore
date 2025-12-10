@@ -1,18 +1,19 @@
 import { useEffect } from "react";
 import ProductList from "./ProductList";
-import LoadingCompoent from "../../app/layout/loading/LoadingComponent";
+import LoadingComponent from "../../app/layout/loading/LoadingComponent";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { fetchFiltersAsync, fetchProductsAsync, productSelectors, setProductParams } from "./catalogSlice";
-import { Grid, Pagination, Paper } from "@mui/material";
+import { fetchFiltersAsync, fetchProductsAsync, productSelectors, setPageNumber, setProductParams } from "./catalogSlice";
+import { Grid, Paper } from "@mui/material";
 import ProductSearchComponent from "./ProductSearchComponet";
 import ProductOrderComponent from "./ProductOrderComponent";
 import ProductBrandsComponent from "./ProductFiltersComponent";
+import PaginationComponent from "../../app/components/PaginationComponent";
 
 
 export default function Catalog() {
     const products = useAppSelector(productSelectors.selectAll)
-    const { productsLoaded, status,
-        filtersLoaded, brands, types, productParams
+    const { productsLoaded,
+        filtersLoaded, brands, types, productParams, metaData
 
     } = useAppSelector(state => state.catalog)
     const dispatch = useAppDispatch()
@@ -27,11 +28,11 @@ export default function Catalog() {
         if (!filtersLoaded) dispatch(fetchFiltersAsync())
     }, [dispatch, filtersLoaded])
 
-    if (status.includes('pending')) return <LoadingCompoent laodingMessage="loading products..." />
+    if (!filtersLoaded) return <LoadingComponent laodingMessage="loading products..." />
 
 
     return (
-        <Grid container spacing={4}>
+        <Grid container columnSpacing={4}>
             <Grid size={3}>
                 <Paper sx={{ mb: 2 }}>
                     <ProductSearchComponent />
@@ -58,8 +59,15 @@ export default function Catalog() {
                 <ProductList products={products} />
             </Grid>
             <Grid size={3}></Grid>
-            <Grid size={9}>
-                <Pagination count={10} size='large' color="secondary" />
+            <Grid size={9} sx={{ mb: 2 }}>
+                {metaData &&
+                    <PaginationComponent
+                        metaData={metaData}
+                        onPageChange={
+                            (page: number) => {
+                                console.info(page);
+                                dispatch(setPageNumber({ pageNumber: page }))
+                            }} />}
             </Grid>
         </Grid >
     )

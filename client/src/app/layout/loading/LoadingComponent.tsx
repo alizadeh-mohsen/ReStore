@@ -5,7 +5,7 @@ interface Props {
 }
 
 
-export default function LoadingCompoent({ laodingMessage = "Loading..." }: Props) {
+export default function LoadingComponent({ laodingMessage = "Loading..." }: Props) {
     return (
 
         <Backdrop open={true} invisible={true}>

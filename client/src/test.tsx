@@ -8,7 +8,7 @@ export default function LoadingIconButton() {
             setLoading(false);
         }, 2000);
         return () => clearTimeout(timeout);
-    });
+    }, []);
     return (
         <Button onClick={() => setLoading(true)} loading={loading}>
             Add to basket

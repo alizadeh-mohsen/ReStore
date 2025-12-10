@@ -1,4 +1,6 @@
 ﻿using API.Entities;
+using API.Extensions;
+using API.RequestHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +19,17 @@ namespace API.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
+        public async Task<ActionResult<PagedList<Product>>> GetProduct([FromQuery] QueryParams queryParams)
         {
-            return await _context.Products.ToListAsync();
+            var query = _context.Products
+                .Search(queryParams.SearchTerm)
+                .Sort(queryParams.OrderBy)
+                .Filter(queryParams.Types, queryParams.Brands)
+                .AsQueryable();
+
+            var products = await PagedList<Product>.ToPagedList(query, queryParams.PageNumber, queryParams.PageSize);
+            Response.AddPaginationHeader(products.MetaData);
+            return Ok(products);
         }
 
         // GET: api/Products/5
@@ -91,6 +101,15 @@ namespace API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("filters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            var brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
+            var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
+            return Ok(new { brands, types });
+        }
+
 
         private bool ProductExists(int id)
         {

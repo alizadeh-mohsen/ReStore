@@ -3,14 +3,44 @@ import { Product } from "../../app/models/product";
 import { toast } from "react-toastify";
 import agent from "../../app/http/agent";
 import { RootState } from "../../app/store/configureStore";
+import { Filters } from "../../app/models/Filters";
+import { ProdcutsParams } from "../../app/models/ProductParams";
+
+interface CatalogState {
+    productsLoaded: boolean
+    filtersLoaded: boolean
+    status: string,
+    brands: string[],
+    types: string[],
+    productParams: ProdcutsParams
+}
 
 const productsAdapter = createEntityAdapter<Product>()
 
-export const fetchProductsAsync = createAsyncThunk<Product[]>(
+function getAxiosParams(productParams: ProdcutsParams) {
+    const params = new URLSearchParams();
+    params.append('pagenNumber', productParams.pageNumber.toString());
+    params.append('pageSize', productParams.pageSize.toString());
+    params.append('orderBy', productParams.orderBy);
+    if (productParams.searchTerm)
+        params.append('searchTerm', productParams.searchTerm);
+    if (productParams.brands)
+        params.append('brands', productParams.brands.toString());
+    if (productParams.types)
+        params.append('types', productParams.types.toString());
+
+    return params;
+}
+
+
+export const fetchProductsAsync = createAsyncThunk<Product[], void, { state: RootState }>(
     'catalog/fetchProductsAsync',
     async (_, thunkApi) => {
         try {
-            return await agent.Catalog.list()
+            console.log('fetching catalog')
+            const params = getAxiosParams(thunkApi.getState().catalog.productParams)
+            console.log('{params}:', params.toString());
+            return await agent.Catalog.list(params)
         }
         catch (error: any) {
             thunkApi.rejectWithValue({ error: error.data })
@@ -32,13 +62,46 @@ export const fetchProductAsync = createAsyncThunk<Product, number>(
     }
 )
 
+export const fetchFiltersAsync = createAsyncThunk<Filters>(
+    'catalog/Filters',
+    async (_, thunkApi) => {
+        try {
+            return await agent.Catalog.getFilters()
+        }
+        catch (error: any) {
+            thunkApi.rejectWithValue({ error: error.data })
+        }
+    }
+)
+
+
+
 export const catalogSlice = createSlice({
     name: 'catalog',
-    initialState: productsAdapter.getInitialState({
+    initialState: productsAdapter.getInitialState<CatalogState>({
         productsLoaded: false,
-        status: 'idle'
+        status: 'idle',
+        filtersLoaded: false,
+        brands: [],
+        types: [],
+        productParams: {
+            pageNumber: 1,
+            pageSize: 5,
+            orderBy: 'name'
+        }
+
     }),
-    reducers: {},
+    reducers: {
+        setProductParams: (state, action) => {
+            state.productsLoaded = false;
+            state.productParams = { ...state.productParams, ...action.payload };
+        },
+        resetProductParams: (state) => {
+            state.productParams.orderBy = 'name';
+            state.productParams.pageSize = 5;
+            state.productParams.pageNumber = 1
+        }
+    },
     extraReducers: (builder => {
         builder.addCase(fetchProductsAsync.pending, (state) => {
             state.status = 'pendingFetchProducts'
@@ -63,6 +126,18 @@ export const catalogSlice = createSlice({
         builder.addCase(fetchProductAsync.rejected, (state, action) => {
             state.status = 'idle';
             console.error(action.payload)
+        });
+        builder.addCase(fetchFiltersAsync.pending, (state) => {
+            state.status = 'pendingFetchFilters'
+        });
+        builder.addCase(fetchFiltersAsync.fulfilled, (state, action) => {
+            state.brands = action.payload.brands;
+            state.types = action.payload.types;
+            state.filtersLoaded = true;
+        });
+        builder.addCase(fetchFiltersAsync.rejected, (state, action) => {
+            state.status = 'idle';
+            console.error(action.payload)
         })
 
     })
@@ -70,3 +145,5 @@ export const catalogSlice = createSlice({
 })
 
 export const productSelectors = productsAdapter.getSelectors((state: RootState) => state.catalog)
+export const { setProductParams, resetProductParams } = catalogSlice.actions;
+

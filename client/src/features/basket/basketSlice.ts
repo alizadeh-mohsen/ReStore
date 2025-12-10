@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Basket } from "../../app/models/Basket";
-import { toast } from "react-toastify";
 import agent from "../../app/http/agent";
 
 

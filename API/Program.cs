@@ -29,7 +29,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-InitializeDataBase();
+//InitializeDataBase();
 
 app.Run();
 

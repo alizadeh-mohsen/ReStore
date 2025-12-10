@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
+import { ProdcutsParams } from "../models/ProductParams";
 
 axios.defaults.baseURL = "http://localhost:5000/api/"
 axios.defaults.withCredentials = true
@@ -39,15 +40,16 @@ axios.interceptors.response.use(async response => {
 )
 
 const requests = {
-    get: (url: string) => axios.get(url).then(getResponseBody),
+    get: (url: string, params?: URLSearchParams) => axios.get(url, { params }).then(getResponseBody),
     post: (url: string, body: {}) => axios.post(url, body).then(getResponseBody),
     put: (url: string, body: {}) => axios.put(url, body).then(getResponseBody),
     delete: (url: string) => axios.delete(url).then(getResponseBody)
 }
 
 const Catalog = {
-    list: () => requests.get('products'),
-    details: (id: number) => requests.get(`products/${id}`)
+    list: (params: URLSearchParams) => requests.get('products', params),
+    details: (id: number) => requests.get(`products/${id}`),
+    getFilters: () => requests.get('products/filters')
 }
 
 const Buggy = {

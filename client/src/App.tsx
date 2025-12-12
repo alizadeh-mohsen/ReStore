@@ -17,13 +17,17 @@ import { useAppDispatch } from './app/store/configureStore';
 import agent from './app/http/agent';
 import { setBasket } from './features/basket/basketSlice';
 import LoadingComponent from './app/layout/loading/LoadingComponent';
+import Login from './features/account/Login';
+import { getCurrentUser } from './features/account/accountSlice';
+import SignUp from './features/account/SignUp';
 
 function App() {
   const [loading, setLoading] = useState(true)
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const buyerId = '58ae70bc-8573-4094-8754-cb5d397b17c7'
+    const buyerId = '58ae70bc-8573-4094-8754-cb5d397b17c7';
+    dispatch(getCurrentUser());
     if (buyerId) {
       agent.Basket.get()
         .then(basket => dispatch(setBasket(basket)))
@@ -66,6 +70,8 @@ function App() {
             <Route path='/testErrors' component={TestErrors} />
             <Route path='/basket' component={BasketComponent} />
             <Route path='/test' component={LoadingIconButton} />
+            <Route path='/login' component={Login} />
+            <Route path='/signup' component={SignUp} />
           </Switch>
         </Container>
       )} />

@@ -17,6 +17,7 @@ namespace API.Automapper
                     .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Product.Brand))
                     .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Product.Type))
                     .ForMember(dest => dest.QuantityInStock, opt => opt.MapFrom(src => src.Product.QuantityInStock));
+
         }
     }
 }

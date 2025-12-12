@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Divider, Grid, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from "@mui/material";
 import agent from "../../app/http/agent";
 import { formatCurrency } from "../../app/util/utils";
+import { toast } from "react-toastify";
 
 
 
@@ -16,7 +17,7 @@ export default function ProductDetail() {
     useEffect(() => {
         agent.Catalog.details(parseInt(id))
             .then(product => setProduct(product))
-            .catch(error => console.log(error))
+            .catch(error => toast.error(error))
             .finally(() => setLoading(false))
 
     }, [id])

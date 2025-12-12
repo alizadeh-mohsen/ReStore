@@ -1,12 +1,35 @@
 ﻿using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(ApiDbContext context)
+        public static async Task Initialize(ApiDbContext context, UserManager<User> userManager)
         {
             context.Database.EnsureCreated();
+
+            if (!userManager.Users.Any())
+            {
+                var bob = new User
+                {
+                    UserName = "bob",
+                    Email = "bob@test.com",
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(bob, "Password@1");
+                await userManager.AddToRoleAsync(bob, "Member");
+
+                var admin = new User
+                {
+                    UserName = "admin",
+                    Email = "admin@test.com ",
+                    EmailConfirmed = true
+                };
+
+                await userManager.CreateAsync(admin, "Password@1");
+                await userManager.AddToRolesAsync(admin, ["Member", "Admin"]);
+            }
 
             if (!context.Products.Any())
             {

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 
 
 export default function Contact() {
-    const { data, title } = useAppSelector((state) => state.counter);
+    const { data, title } = useAppSelector(state => state.counter);
     const dispatch = useAppDispatch();
 
     return (

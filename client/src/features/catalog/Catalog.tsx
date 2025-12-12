@@ -50,6 +50,7 @@ export default function Catalog() {
                 <Paper sx={{ mb: 2, p: 2 }}>
                     <ProductBrandsComponent
                         items={types}
+
                         checked={productParams.types}
                         onChange={(items: string[]) => dispatch(setProductParams({ types: items }))}
                     />
@@ -65,7 +66,6 @@ export default function Catalog() {
                         metaData={metaData}
                         onPageChange={
                             (page: number) => {
-                                console.info(page);
                                 dispatch(setPageNumber({ pageNumber: page }))
                             }} />}
             </Grid>

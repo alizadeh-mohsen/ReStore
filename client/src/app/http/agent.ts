@@ -1,6 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { PaginatedResponse } from "../models/PaginatedResponose";
+import { RegisterDto } from "../models/RegisterDto";
+import { LoginDto } from "../models/LoginDto";
+import { store } from "../store/configureStore";
 
 axios.defaults.baseURL = "http://localhost:5000/api/"
 axios.defaults.withCredentials = true
@@ -11,6 +14,12 @@ const sleep = () => new Promise(resolve => setTimeout(resolve, 500));
 const getResponseBody = (response: AxiosResponse) => {
     return response.data
 }
+axios.interceptors.request.use(config => {
+    const token = store.getState().account.userDto?.token;
+    if (token)
+        config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})
 
 axios.interceptors.response.use(async response => {
     await sleep();
@@ -53,7 +62,6 @@ const requests = {
 
 const Catalog = {
     list: (params: URLSearchParams) => {
-        console.log('{params}', params);
         return requests.get('products', params)
     },
     details: (id: number) => requests.get(`products/${id}`),
@@ -72,13 +80,19 @@ const Basket = {
     get: () => requests.get('basket'),
     addItem: (productId: number, quantity = 1) => requests.post(`basket?productId=${productId}&quantity=${quantity}`, {}),
     deleteItem: (productId: number, quantity = 1) => requests.delete(`basket?productId=${productId}&quantity=${quantity}`)
+}
 
+const Account = {
+    login: (loginDto: LoginDto) => requests.post('account/login', loginDto),
+    register: (registerDto: RegisterDto) => requests.post('account/register', registerDto),
+    currentUser: () => requests.get('account/currentUser')
 }
 
 const agent = {
     Catalog,
     Buggy,
-    Basket
+    Basket,
+    Account
 }
 
 export default agent;
